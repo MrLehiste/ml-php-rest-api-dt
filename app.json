@@ -1,0 +1,6 @@
+{
+  "name": "PHP rest api dt",
+  "description": "A barebones PHP api for heroku that makes use of the Silex web framework",
+  "repository": "https://github.com/MrLehiste/ml-php-rest-api-dt",
+  "addons": []
+}
