@@ -10,13 +10,17 @@ $app->register(new Silex\Provider\MonologServiceProvider(), array(
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__.'/views',
 ));
+
+$dotenv = new Dotenv\Dotenv(__DIR__);
+$dotenv->load();
+
 // Our web handlers
 $app->get('/', function() use($app) {
   $app['monolog']->addDebug('logging output.');
   return $app['twig']->render('index.twig');
 });
 
-$dbopts = parse_url(getenv('DATABASE_URL'));
+$dbopts = parse_url(getenv('DATABASE_URL')); 
 $app->register(new Herrera\Pdo\PdoServiceProvider(),
     array(
         'pdo.dsn' => 'pgsql:dbname='.ltrim($dbopts["path"],'/').';host='.$dbopts["host"] . ';port=' . $dbopts["port"],
