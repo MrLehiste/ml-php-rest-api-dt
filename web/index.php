@@ -11,8 +11,15 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__.'/views',
 ));
 
+// Loading environment variables (for dev env)
 $dotenv = new Dotenv\Dotenv(__DIR__);
-$dotenv->load();
+try{
+  $dotenv->load();
+  $app['monolog']->addDebug('$dotenv->load(); finished');
+}
+catch(Exception $e) {
+  $app['monolog']->addDebug('$dotenv->load(); FAILED');
+}
 
 // Our web handlers
 $app->get('/', function() use($app) {
