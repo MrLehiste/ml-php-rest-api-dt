@@ -35,13 +35,29 @@ $app->register(new Herrera\Pdo\PdoServiceProvider(),
         'pdo.password' => $dbopts["pass"]
     )
 );
+$app->register(new Silex\Provider\DoctrineServiceProvider(), array(
+    'db.options' => array(
+        'driver'   => 'pdo_pgsql',
+        'dbname'   => ltrim($dbopts["path"],'/'),
+        'host'     => $dbopts["host"],
+        'user'     => $dbopts["user"],
+        'password' => $dbopts["pass"],
+        'port'     => $dbopts["port"],
+    ),
+));
 
 $app->get('/db/', function() use($app) {
   $app['monolog']->addDebug( getenv('DATABASE_URL') );
   return json_encode(parse_url(getenv('DATABASE_URL')));
 });
 
-$app->get('/users/', function() use($app) {
+$app->get('/users', function () use ($app) {
+    $names = array();
+    $names = $app['db']->fetchAll('SELECT first_name as name FROM users');
+
+    return $app['twig']->render('database.twig', array('names' => $names));
+});
+$app->get('/x/users/', function() use($app) {
   $st = $app['pdo']->prepare('SELECT first_name as name FROM users');
   $st->execute();
 

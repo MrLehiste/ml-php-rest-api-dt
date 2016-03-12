@@ -5,7 +5,8 @@
     "twig/twig": "^1.19",
     "symfony/twig-bridge": "^2.7",
     "herrera-io/silex-pdo": "^1.2",
-    "vlucas/phpdotenv": "^2.2"
+    "vlucas/phpdotenv": "^2.2",
+    "doctrine/dbal": "^2.5"
   },
   "require-dev": {
     "heroku/heroku-buildpack-php": "*"
