@@ -42,7 +42,7 @@ $app->get('/db/', function() use($app) {
 });
 
 $app->get('/users/', function() use($app) {
-  $st = $app['pdo']->prepare('SELECT first_name FROM users');
+  $st = $app['pdo']->prepare('SELECT first_name as name FROM users');
   $st->execute();
 
   $names = array();
