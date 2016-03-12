@@ -41,4 +41,19 @@ $app->get('/db/', function() use($app) {
   return json_encode(parse_url(getenv('DATABASE_URL')));
 });
 
+$app->get('/users/', function() use($app) {
+  $st = $app['pdo']->prepare('SELECT first_name FROM users');
+  $st->execute();
+
+  $names = array();
+  while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
+    $app['monolog']->addDebug('Row ' . $row['first_name']);
+    $names[] = $row;
+  }
+
+  return $app['twig']->render('database.twig', array(
+    'names' => $names
+  ));
+});
+
 $app->run();
