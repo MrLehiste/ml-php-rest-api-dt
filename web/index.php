@@ -43,29 +43,45 @@ $app->get('/users/', function (Request $request) use ($app) {
 });
 $app->get('/users/{id}', function (Request $request, $id) use ($app) {
     $sql = "SELECT * FROM users WHERE user_id = ?";
-    $post = $app['db']->fetchAssoc($sql, array((int) $id));
-    return $app->json($post, 200);
+    $user = $app['db']->fetchAssoc($sql, array((int) $id));
+    return $app->json($user, 200);
 });
 //create new user
 $app->post('/users/', function (Request $request) use ($app) {
-    $user = array(
-    	'first_name' => $request->get('first_name'),
-    	'last_name' => $request->get('last_name'),
-        'email' => $request->get('email'),
-        'password' => $request->get('password'),
-    );
+    // $user = array(
+    // 	'first_name' => $request->get('first_name'),
+    // 	'last_name' => $request->get('last_name'),
+    //     'email' => $request->get('email'),
+    //     'password' => $request->get('password'),
+    // );
+    $user = $request->request->all();
     $app['db']->insert('users', $user);
-    return new Response("User " . $app['db']->lastInsertId() . " created", 201);
+    
+    //$id = $app['db']->lastInsertId();
+    //echo "id: $id <br>\n";
+    $sql = "SELECT * FROM users WHERE user_id = (SELECT MAX(user_id) FROM users)";
+    $user = $app['db']->fetchAssoc($sql);
+    $response = new Response(json_encode($user), 201);
+    $response->headers->set('Location', '/users/' . $user['user_id']);
+    return $response;
 });
 //update user
 $app->post('/users/{id}', function (Request $request, $id) use ($app) {
-    // $sql = "UPDATE users SET email = ?, name = ? WHERE user_id = ?";
-    // $app['db']->executeUpdate($sql, array(
-    // 	$request->get('email'),
-    // 	$request->get('name'),
-    // 	(int) $id)
-    // );
-    return $app->json($request->request->all(), 200);
+    $fields = ""; $values = array();
+    foreach ($request->request->all() as $key => $value) {
+        $fields = $fields . ", " . $key . " = ?";
+        array_push($values, $value);
+    }
+    $fields = substr($fields, 1);
+    array_push($values, (int) $id);
+    $sql = "UPDATE users SET " . $fields . " WHERE user_id = ?";
+    $app['db']->executeUpdate($sql, $values);
+    $sql = "SELECT * FROM users WHERE user_id = ?";
+    $user = $app['db']->fetchAssoc($sql, array((int) $id));
+    //return $app->json($user, 200);
+    $response = new Response(json_encode($user), 201);
+    $response->headers->set('Location', '/users/' . $id);
+    return $response;
 });
 //delete user
 $app->delete('/users/{id}', function (Request $request, $id) use ($app) {
