@@ -39,28 +39,39 @@ $app->get('/users/', function (Request $request) use ($app) {
     //$names = $app['db']->fetchAll('SELECT first_name as name FROM users');
     //return $app['twig']->render('database.twig', array('names' => $names));
     $users = $app['db']->fetchAll('SELECT * FROM users');
-    return $app->json($users, 201);
+    return $app->json($users, 200);
 });
 $app->get('/users/{id}', function (Request $request, $id) use ($app) {
     $sql = "SELECT * FROM users WHERE user_id = ?";
     $post = $app['db']->fetchAssoc($sql, array((int) $id));
-    return $app->json($post, 201);
+    return $app->json($post, 200);
 });
+//create new user
 $app->post('/users/', function (Request $request) use ($app) {
     $user = array(
     	'first_name' => $request->get('first_name'),
     	'last_name' => $request->get('last_name'),
         'email' => $request->get('email'),
         'password' => $request->get('password'),
-        'is_active' => $request->get('is_active'),
     );
     $app['db']->insert('users', $user);
     return new Response("User " . $app['db']->lastInsertId() . " created", 201);
 });
+//update user
+$app->post('/users/{id}', function (Request $request, $id) use ($app) {
+    // $sql = "UPDATE users SET email = ?, name = ? WHERE user_id = ?";
+    // $app['db']->executeUpdate($sql, array(
+    // 	$request->get('email'),
+    // 	$request->get('name'),
+    // 	(int) $id)
+    // );
+    return $app->json($request->request->all(), 200);
+});
+//delete user
 $app->delete('/users/{id}', function (Request $request, $id) use ($app) {
-    $sql = "DELETE FROM users WHERE id = ?";
+    $sql = "DELETE FROM users WHERE user_id = ?";
     $app['db']->executeUpdate($sql, array((int) $id));
-    return new Response("User " . $id . " deleted", 303);
+    return new Response("User " . $id . " deleted", 204);
 });
 
 $app->run();
