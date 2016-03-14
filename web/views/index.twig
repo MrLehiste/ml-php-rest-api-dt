@@ -1,10 +1,46 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="jumbotron text-center">
+<div class="jumbotron">
   <div class="container">
-    TWIG Says Hello!
+    <h2>API Doc</h2>
   </div>
+  <table class="table table-striped text-center" style="width: 33%;">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>HTTP Method</th>
+        <th>Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="/users">/users</a></td>
+        <td>GET</td>
+        <td>Returns an array of users</td>
+      </tr>
+      <tr>
+        <td><a href="/users/1">/users/:id</a></td>
+        <td>GET</td>
+        <td>Returns the user with id of :id</td>
+      </tr>
+      <tr>
+        <td>/users</td>
+        <td>POST</td>
+        <td>Adds a new user and return it with an id attribute added</td>
+      </tr>
+      <tr>
+        <td>/users/:id</td>
+        <td>POST</td>
+        <td>Partial Updates to the user with id of :id</td>
+      </tr>
+      <tr>
+        <td>/users/:id</td>
+        <td>DELETE</td>
+        <td>Deletes the user with id of :id</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 {% endblock %}

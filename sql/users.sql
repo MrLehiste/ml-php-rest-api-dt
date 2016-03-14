@@ -22,6 +22,6 @@ URL                        HTTP Method  Operation
 /api/users/:id             GET          Returns the user with id of :id
 /api/users                 POST         Adds a new user and return it with an id attribute added
 /api/users/:id             POST         Partial Updates to the user with id of :id
+/api/users/:id             DELETE       Deletes the user with id of :id
 --/api/users/:id             PUT          Updates the user with id of :id
 --/api/users/:id             PATCH        Partially update INSTRUCTIONS the user with id of :id
-/api/users/:id             DELETE       Deletes the user with id of :id
