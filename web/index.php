@@ -1,7 +1,8 @@
 <?php
-use 
-	Symfony\Component\HttpFoundation\Request,
-	Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 require('../vendor/autoload.php');
 $app = new Silex\Application();
 $app['debug'] = true;
@@ -32,6 +33,14 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'port'     => $dbopts["port"],
     ),
 ));
+
+//Accepting a JSON Request Body
+$app->before(function (Request $request) {
+    if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        $data = json_decode($request->getContent(), true);
+        $request->request->replace(is_array($data) ? $data : array());
+    }
+});
 
 //$app->get('/db/', function() use($app) { $app['monolog']->addDebug( getenv('DATABASE_URL') ); return json_encode(parse_url(getenv('DATABASE_URL'))); });
 
@@ -68,6 +77,7 @@ $app->post('/users/', function (Request $request) use ($app) {
 //update user
 $app->post('/users/{id}', function (Request $request, $id) use ($app) {
     $fields = ""; $values = array();
+    //echo json_encode($request->request->all()); echo "LINE<br>\n";
     foreach ($request->request->all() as $key => $value) {
         $fields = $fields . ", " . $key . " = ?";
         array_push($values, $value);
